@@ -17,6 +17,11 @@ $ python -m venv .env
 $ . /.env/bin/activate
 ```
 
+Instale as dependências do projeto:
+```sh
+$ pip install -r requirements.txt
+```
+
 Execute o arquivo principal:
 ```sh
 $ python main.py
