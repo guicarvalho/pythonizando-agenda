@@ -1,4 +1,9 @@
-def exibir_menu():
+def show_menu_options():
+    """Show menu options.
+
+    Returns:
+        Menu option the user has chosen.
+    """
     return int(
         input(
             """

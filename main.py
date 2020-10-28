@@ -1,42 +1,49 @@
+"""Applicaiton main module."""
+
 import sqlite3
 
-from tasks.menu import exibir_menu
-from tasks.crud import salvar, excluir, listar
+from database.connection import create_all, get_cursor
+from database.dal import delete_by_name, find_all, save
+from view.menu import show_menu_options
 
 
-contatos = []
-opcao = 1
+def init():
+    """Initialize program."""
+    option = -1
+
+    while option != 0:
+        option = show_menu_options()
+
+        if option == 1:
+            print("Cadastrando...")
+
+            name = input("Informe o nome: ")
+            phone = input("Informe o telefone: ")
+
+            with get_cursor() as cursor:
+                save(cursor=cursor, name=name, phone=phone)
+
+        elif option == 2:
+            print("Listando...")
+
+            with get_cursor() as cursor:
+                contacts = find_all(cursor=cursor)
+
+            for contact in contacts:
+                print("-" * 100)
+                print(f"Nome: {contact[0]}\nNúmero: {contact[1]}")
+
+        elif option == 3:
+            print("Excluindo...")
+
+            name = input("Informe o name do contato que deseja remover: ")
+
+            with get_cursor() as cursor:
+                delete_by_name(cursor=cursor, name=name)
+
+            print("Contato removido com sucesso!")
 
 
-while opcao != 0:
-
-    opcao = exibir_menu()
-
-    if opcao == 1:
-        print("Cadastrando...")
-
-        nome = input("Informe o nome: ")
-        numero = input("Informe o numero: ")
-
-        salvar(nome=nome, numero=numero, contatos=contatos)
-
-    elif opcao == 2:
-        print("Listando...")
-
-        with sqlite3.connect("contatos.db") as conn:
-            cursor = conn.cursor()
-
-            contatos = listar(cursor=cursor)
-
-        for contato in contatos:
-            print("-" * 100)
-            print(f"Nome: {contato[0]}\nNúmero: {contato[1]}")
-
-    elif opcao == 3:
-        print("Excluindo...")
-
-        nome_excluir = input("Informe o nome do contato que deseja remover: ")
-
-        excluir(contatos=contatos, nome_excluir=nome_excluir)
-
-        print("Contato removido com sucesso!")
+if __name__ == "__main__":
+    create_all()
+    init()
